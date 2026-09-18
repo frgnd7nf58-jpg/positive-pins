@@ -3,14 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Positive Pins</title>
 
     <style>
-
         * {
             box-sizing: border-box;
         }
@@ -51,18 +48,21 @@
         }
 
         .icon {
-            font-size: 70px;
+            font-size: 80px;
         }
 
         h1 {
             margin-top: 15px;
-            font-size: 28px;
+
+            font-size: 24px;
+
+            color: #555;
         }
 
         #message {
-            margin: 35px 0;
+            margin: 30px 0 35px;
 
-            font-size: 27px;
+            font-size: 28px;
             font-weight: bold;
 
             line-height: 1.4;
@@ -83,6 +83,10 @@
             cursor: pointer;
         }
 
+        button:active {
+            transform: scale(0.98);
+        }
+
         .footer {
             margin-top: 30px;
 
@@ -90,10 +94,8 @@
 
             color: #777;
         }
-
     </style>
 </head>
-
 
 <body>
 
@@ -107,7 +109,9 @@
             A little positivity for you
         </h1>
 
-        <div id="message"></div>
+        <div id="message">
+            Loading something positive...
+        </div>
 
         <button onclick="showMessage()">
             Give me another ✨
@@ -120,119 +124,92 @@
     </div>
 
 
+    <!-- Loads the 500-message library -->
+    <script src="messages.js"></script>
+
+
     <script>
 
-        const themes = {
-
-            general: {
-                icon: "✨",
-
-                title: "A little positivity for you",
-
-                messages: [
-
-                    "You are doing better than you think.",
-
-                    "You deserve to be proud of yourself.",
-
-                    "Small steps still move you forward.",
-
-                    "You don't have to be perfect to be brilliant.",
-
-                    "You matter more than you realise.",
-
-                    "Be as kind to yourself as you are to others.",
-
-                    "One difficult day doesn't define you.",
-
-                    "There are brighter days ahead.",
-
-                    "You are capable of more than you realise.",
-
-                    "Today is another chance to surprise yourself.",
-
-                    "Your best is enough.",
-
-                    "Keep going. You've got this."
-
-                ]
-            },
-
-
-            frog: {
-                icon: "🐸",
-
-                title: "A little froggy encouragement",
-
-                messages: [
-
-                    "You're doing toadally fine.",
-
-                    "Take the leap. You've got this.",
-
-                    "You're doing better than you think.",
-
-                    "Sometimes you just need to sit on your lily pad and recharge.",
-
-                    "Keep hopping forward.",
-
-                    "You are absolutely ribbiting company.",
-
-                    "Every little hop still moves you forward.",
-
-                    "Don't forget to be kind to yourself."
-
-                ]
-            }
-
-        };
-
-
-        const params =
-            new URLSearchParams(window.location.search);
-
-
-        const requestedTheme =
-            params.get("theme") || "general";
-
-
-        const theme =
-            themes[requestedTheme] || themes.general;
-
-
-        document.getElementById("icon").textContent =
-            theme.icon;
-
-
-        document.getElementById("title").textContent =
-            theme.title;
-
-
+        let previousTheme = -1;
         let previousMessage = -1;
 
 
         function showMessage() {
 
-            let number;
+            const themes = window.positivePinThemes;
+
+
+            if (!themes || themes.length === 0) {
+
+                document.getElementById("message").textContent =
+                    "Something went wrong loading the messages.";
+
+                return;
+            }
+
+
+            let themeNumber;
+
+
+            /*
+                Pick a random theme.
+
+                If there is more than one theme,
+                don't show the same theme twice in a row.
+            */
 
             do {
 
-                number = Math.floor(
-                    Math.random() *
-                    theme.messages.length
-                );
+                themeNumber =
+                    Math.floor(
+                        Math.random() * themes.length
+                    );
 
             } while (
-                number === previousMessage &&
+                themeNumber === previousTheme &&
+                themes.length > 1
+            );
+
+
+            const theme = themes[themeNumber];
+
+
+            let messageNumber;
+
+
+            /*
+                Pick a random message
+                from inside the chosen theme.
+            */
+
+            do {
+
+                messageNumber =
+                    Math.floor(
+                        Math.random() * theme.messages.length
+                    );
+
+            } while (
+                themeNumber === previousTheme &&
+                messageNumber === previousMessage &&
                 theme.messages.length > 1
             );
 
 
-            previousMessage = number;
+            previousTheme = themeNumber;
+            previousMessage = messageNumber;
+
+
+            document.getElementById("icon").textContent =
+                theme.icon;
+
+
+            document.getElementById("title").textContent =
+                theme.title;
 
 
             document.getElementById("message").textContent =
-                theme.messages[number];
+                theme.messages[messageNumber];
 
         }
 
