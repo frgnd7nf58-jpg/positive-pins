@@ -8,6 +8,7 @@
     <title>Positive Pins</title>
 
     <style>
+
         * {
             box-sizing: border-box;
         }
@@ -31,6 +32,7 @@
             );
         }
 
+
         .card {
             width: 100%;
             max-width: 500px;
@@ -45,28 +47,48 @@
 
             box-shadow:
                 0 10px 30px rgba(0,0,0,0.12);
+
+            overflow: hidden;
         }
+
 
         .icon {
             font-size: 80px;
+
+            min-height: 100px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
+
         h1 {
-            margin-top: 15px;
+            margin-top: 10px;
+
+            min-height: 35px;
 
             font-size: 24px;
 
             color: #555;
         }
 
+
         #message {
             margin: 30px 0 35px;
+
+            min-height: 120px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
             font-size: 28px;
             font-weight: bold;
 
             line-height: 1.4;
         }
+
 
         button {
             border: none;
@@ -81,11 +103,29 @@
             color: white;
 
             cursor: pointer;
+
+            transition:
+                transform 0.15s ease,
+                opacity 0.15s ease;
         }
 
-        button:active {
-            transform: scale(0.98);
+
+        button:hover {
+            transform: scale(1.03);
         }
+
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: default;
+            transform: none;
+        }
+
 
         .footer {
             margin-top: 30px;
@@ -94,28 +134,158 @@
 
             color: #777;
         }
+
+
+        /* -------------------------- */
+        /* REVEAL ANIMATIONS          */
+        /* -------------------------- */
+
+
+        .thinking {
+            animation:
+                pulse 0.65s ease-in-out infinite alternate;
+        }
+
+
+        .icon-reveal {
+            animation:
+                iconPop 0.55s
+                cubic-bezier(0.34, 1.56, 0.64, 1)
+                forwards;
+        }
+
+
+        .title-reveal {
+            animation:
+                fadeDown 0.45s ease forwards;
+        }
+
+
+        .message-reveal {
+            animation:
+                messageReveal 0.6s ease forwards;
+        }
+
+
+        @keyframes pulse {
+
+            from {
+                transform: scale(0.9);
+                opacity: 0.5;
+            }
+
+            to {
+                transform: scale(1.15);
+                opacity: 1;
+            }
+
+        }
+
+
+        @keyframes iconPop {
+
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            65% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+        }
+
+
+        @keyframes fadeDown {
+
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        }
+
+
+        @keyframes messageReveal {
+
+            from {
+                opacity: 0;
+                transform:
+                    translateY(20px)
+                    scale(0.96);
+            }
+
+            to {
+                opacity: 1;
+                transform:
+                    translateY(0)
+                    scale(1);
+            }
+
+        }
+
+
+        /*
+            Respect phones/computers where the user
+            has reduced motion enabled.
+        */
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+        }
+
     </style>
+
 </head>
+
 
 <body>
 
     <div class="card">
 
-        <div class="icon" id="icon">
+        <div
+            class="icon"
+            id="icon"
+        >
             ✨
         </div>
+
 
         <h1 id="title">
             A little positivity for you
         </h1>
 
+
         <div id="message">
-            Loading something positive...
         </div>
 
-        <button onclick="showMessage()">
+
+        <button
+            id="anotherButton"
+            onclick="showMessage()"
+        >
             Give me another ✨
         </button>
+
 
         <div class="footer">
             Take what you need today.
@@ -124,8 +294,11 @@
     </div>
 
 
-    <!-- Loads the 500-message library -->
+
+    <!-- Load all 500 Positive Pins messages -->
+
     <script src="messages.js"></script>
+
 
 
     <script>
@@ -133,36 +306,54 @@
         let previousTheme = -1;
         let previousMessage = -1;
 
+        let revealing = false;
+
 
         function showMessage() {
 
-            const themes = window.positivePinThemes;
+            /*
+                Prevent someone pressing the button
+                several times during the animation.
+            */
+
+            if (revealing) {
+                return;
+            }
+
+
+            revealing = true;
+
+
+            const themes =
+                window.positivePinThemes;
 
 
             if (!themes || themes.length === 0) {
 
-                document.getElementById("message").textContent =
+                document.getElementById("message")
+                    .textContent =
                     "Something went wrong loading the messages.";
+
+                revealing = false;
 
                 return;
             }
 
 
+            /* -------------------------- */
+            /* PICK A RANDOM THEME        */
+            /* -------------------------- */
+
+
             let themeNumber;
 
-
-            /*
-                Pick a random theme.
-
-                If there is more than one theme,
-                don't show the same theme twice in a row.
-            */
 
             do {
 
                 themeNumber =
                     Math.floor(
-                        Math.random() * themes.length
+                        Math.random() *
+                        themes.length
                     );
 
             } while (
@@ -171,22 +362,25 @@
             );
 
 
-            const theme = themes[themeNumber];
+            const theme =
+                themes[themeNumber];
+
+
+
+            /* -------------------------- */
+            /* PICK A RANDOM MESSAGE      */
+            /* -------------------------- */
 
 
             let messageNumber;
 
 
-            /*
-                Pick a random message
-                from inside the chosen theme.
-            */
-
             do {
 
                 messageNumber =
                     Math.floor(
-                        Math.random() * theme.messages.length
+                        Math.random() *
+                        theme.messages.length
                     );
 
             } while (
@@ -196,23 +390,157 @@
             );
 
 
-            previousTheme = themeNumber;
-            previousMessage = messageNumber;
+            previousTheme =
+                themeNumber;
 
 
-            document.getElementById("icon").textContent =
-                theme.icon;
+            previousMessage =
+                messageNumber;
 
 
-            document.getElementById("title").textContent =
-                theme.title;
+
+            /* -------------------------- */
+            /* GET PAGE ELEMENTS          */
+            /* -------------------------- */
 
 
-            document.getElementById("message").textContent =
-                theme.messages[messageNumber];
+            const icon =
+                document.getElementById("icon");
+
+
+            const title =
+                document.getElementById("title");
+
+
+            const message =
+                document.getElementById("message");
+
+
+            const button =
+                document.getElementById("anotherButton");
+
+
+
+            /* -------------------------- */
+            /* RESET REVEAL               */
+            /* -------------------------- */
+
+
+            icon.className =
+                "icon thinking";
+
+
+            title.className =
+                "";
+
+
+            message.className =
+                "";
+
+
+            icon.textContent =
+                "✨";
+
+
+            title.textContent =
+                "Finding something for you...";
+
+
+            message.textContent =
+                "";
+
+
+            button.disabled =
+                true;
+
+
+            button.textContent =
+                "Finding one... ✨";
+
+
+
+            /* -------------------------- */
+            /* REVEAL THE ICON            */
+            /* -------------------------- */
+
+
+            setTimeout(function() {
+
+                icon.className =
+                    "icon icon-reveal";
+
+
+                icon.textContent =
+                    theme.icon;
+
+            }, 350);
+
+
+
+            /* -------------------------- */
+            /* REVEAL THE HEADING         */
+            /* -------------------------- */
+
+
+            setTimeout(function() {
+
+                title.textContent =
+                    theme.title;
+
+
+                title.className =
+                    "title-reveal";
+
+            }, 650);
+
+
+
+            /* -------------------------- */
+            /* REVEAL THE MESSAGE         */
+            /* -------------------------- */
+
+
+            setTimeout(function() {
+
+                message.textContent =
+                    theme.messages[messageNumber];
+
+
+                message.className =
+                    "message-reveal";
+
+            }, 900);
+
+
+
+            /* -------------------------- */
+            /* RE-ENABLE BUTTON           */
+            /* -------------------------- */
+
+
+            setTimeout(function() {
+
+                button.disabled =
+                    false;
+
+
+                button.textContent =
+                    "Give me another ✨";
+
+
+                revealing =
+                    false;
+
+            }, 1450);
 
         }
 
+
+
+        /*
+            Automatically perform the reveal
+            when somebody first opens the badge.
+        */
 
         showMessage();
 
