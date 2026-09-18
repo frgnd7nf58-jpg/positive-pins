@@ -99,11 +99,11 @@
 
     <div class="card">
 
-        <div class="icon">
+        <div class="icon" id="icon">
             ✨
         </div>
 
-        <h1>
+        <h1 id="title">
             A little positivity for you
         </h1>
 
@@ -122,33 +122,90 @@
 
     <script>
 
-        const messages = [
+        const themes = {
 
-            "You are doing better than you think.",
+            general: {
+                icon: "✨",
 
-            "You deserve to be proud of yourself.",
+                title: "A little positivity for you",
 
-            "Small steps still move you forward.",
+                messages: [
 
-            "You don't have to be perfect to be brilliant.",
+                    "You are doing better than you think.",
 
-            "You matter more than you realise.",
+                    "You deserve to be proud of yourself.",
 
-            "Be as kind to yourself as you are to others.",
+                    "Small steps still move you forward.",
 
-            "One difficult day doesn't define you.",
+                    "You don't have to be perfect to be brilliant.",
 
-            "There are brighter days ahead.",
+                    "You matter more than you realise.",
 
-            "You are capable of more than you realise.",
+                    "Be as kind to yourself as you are to others.",
 
-            "Today is another chance to surprise yourself.",
+                    "One difficult day doesn't define you.",
 
-            "Your best is enough.",
+                    "There are brighter days ahead.",
 
-            "Keep going. You've got this."
+                    "You are capable of more than you realise.",
 
-        ];
+                    "Today is another chance to surprise yourself.",
+
+                    "Your best is enough.",
+
+                    "Keep going. You've got this."
+
+                ]
+            },
+
+
+            frog: {
+                icon: "🐸",
+
+                title: "A little froggy encouragement",
+
+                messages: [
+
+                    "You're doing toadally fine.",
+
+                    "Take the leap. You've got this.",
+
+                    "You're doing better than you think.",
+
+                    "Sometimes you just need to sit on your lily pad and recharge.",
+
+                    "Keep hopping forward.",
+
+                    "You are absolutely ribbiting company.",
+
+                    "Every little hop still moves you forward.",
+
+                    "Don't forget to be kind to yourself."
+
+                ]
+            }
+
+        };
+
+
+        const params =
+            new URLSearchParams(window.location.search);
+
+
+        const requestedTheme =
+            params.get("theme") || "general";
+
+
+        const theme =
+            themes[requestedTheme] || themes.general;
+
+
+        document.getElementById("icon").textContent =
+            theme.icon;
+
+
+        document.getElementById("title").textContent =
+            theme.title;
 
 
         let previousMessage = -1;
@@ -161,12 +218,13 @@
             do {
 
                 number = Math.floor(
-                    Math.random() * messages.length
+                    Math.random() *
+                    theme.messages.length
                 );
 
             } while (
                 number === previousMessage &&
-                messages.length > 1
+                theme.messages.length > 1
             );
 
 
@@ -174,7 +232,7 @@
 
 
             document.getElementById("message").textContent =
-                messages[number];
+                theme.messages[number];
 
         }
 
